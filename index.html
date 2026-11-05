@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Грибная засада</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --card: #1a2129;
+    --text: #e6edf3;
+    --muted: #8b98a5;
+    --mvp: #16181c;
+    --mvp-accent: #3a3f47;
+    --green: #2f9e44;
+    --green-bg: #14291a;
+    --purple: #9c36b5;
+    --purple-bg: #27152e;
+    --border: #2a333d;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+  }
+
+  .wrap { max-width: 820px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  header { margin-bottom: 28px; }
+  h1 { font-size: 2.1rem; margin: 0 0 6px; }
+  .subtitle { color: var(--muted); font-size: 1.05rem; margin: 0; }
+
+  .hero {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    display: block;
+    margin: 0 0 28px;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .legend .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .dot { width: 13px; height: 13px; border-radius: 50%; flex: 0 0 auto; }
+  .dot.mvp { background: #2b2f36; border: 2px solid #6b7480; }
+  .dot.green { background: var(--green); }
+  .dot.purple { background: var(--purple); }
+
+  section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+  section h2 {
+    margin: 0 0 14px;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  section h2 .tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 6px;
+    color: #fff;
+  }
+  .s-mvp { border-left: 4px solid var(--mvp-accent); }
+  .s-mvp .tag { background: var(--mvp-accent); }
+  .s-green { border-left: 4px solid var(--green); }
+  .s-green .tag { background: var(--green); }
+  .s-purple { border-left: 4px solid var(--purple); }
+  .s-purple .tag { background: var(--purple); }
+
+  h3 { font-size: 1rem; margin: 16px 0 6px; }
+  p { margin: 6px 0; }
+  ul { margin: 6px 0; padding-left: 20px; }
+  li { margin: 3px 0; }
+  .muted { color: var(--muted); }
+
+  /* ── Макет игрового экрана ── */
+  .mock {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #0a0d11;
+    overflow: hidden;
+  }
+  .mock-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #141a21;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+  }
+  .mock-top .stat {
+    background: #0f1419;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 10px;
+    white-space: nowrap;
+  }
+  .mock-top .spacer { flex: 1 1 auto; }
+  .mock-top .btn {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .mock-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 14px;
+  }
+  .field {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background:
+      radial-gradient(circle at 20% 80%, #1c2a1c 0 8%, transparent 9%),
+      radial-gradient(circle at 70% 30%, #1c2a1c 0 10%, transparent 11%),
+      linear-gradient(135deg, #1b2a1b, #14220f);
+    overflow: hidden;
+  }
+  .field .label {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #cfd8e0;
+    background: rgba(10, 13, 17, 0.7);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .path {
+    position: absolute;
+    width: 26%;
+    height: 120%;
+    left: 12%;
+    top: -10%;
+    background: #6b4a2b;
+    border-radius: 999px;
+    transform: rotate(35deg);
+    opacity: 0.9;
+  }
+  .castle {
+    position: absolute;
+    font-size: 2rem;
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.6));
+  }
+  .castle.own { top: 12px; right: 12px; }
+  .castle.enemy { top: 12px; left: 12px; }
+  .tower {
+    position: absolute;
+    font-size: 1.25rem;
+    background: rgba(10, 13, 17, 0.72);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px 7px;
+  }
+  .mush {
+    position: absolute;
+    font-size: 1.3rem;
+  }
+  .hint {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    font-size: 0.7rem;
+    color: #9fb3c8;
+    background: rgba(10, 13, 17, 0.7);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .mock-bottom {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr auto;
+    gap: 10px;
+    align-items: stretch;
+    padding: 14px;
+    border-top: 1px solid var(--border);
+    background: #141a21;
+  }
+  .lab {
+    background: #0f1419;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+  .lab .cap { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .lab .val { font-size: 1.15rem; margin-top: 2px; }
+  .queue {
+    background: #0f1419;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .arrow {
+    display: flex;
+    align-items: center;
+    color: var(--muted);
+    font-size: 1.3rem;
+    padding: 0 4px;
+  }
+  .capsule-title {
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin: 14px 0 6px;
+  }
+
+  @media (max-width: 560px) {
+    .mock-fields { grid-template-columns: 1fr; }
+    .mock-bottom { grid-template-columns: 1fr 1fr; }
+    .arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Грибная засада</h1>
+    <p class="subtitle">2D tower defense — защищай свой замок и засылай грибы противнику</p>
+  </header>
+
+  <img class="hero" src="photo_2026-11-05 15.11.54.jpeg" alt="Главный герой игры">
+
+  <div class="legend">
+    <span class="chip"><span class="dot mvp"></span> Чёрный — MVP</span>
+    <span class="chip"><span class="dot green"></span> Зелёный — больше, чем MVP</span>
+    <span class="chip"><span class="dot purple"></span> Фиолетовый — можно менять</span>
+  </div>
+
+  <section>
+    <h2>Суть</h2>
+    <p>Игрок одновременно <strong>защищает свой замок</strong> и <strong>отправляет врагов на противника</strong>.</p>
+    <p>Сессионка на 2 человека, каждый раунд — 10 минут.</p>
+    <p>Видно поле противника: на компьютере — на одном экране, на мобильном — переключение между экранами. Видно, как и куда враг ставит башни.</p>
+  </section>
+
+  <section>
+    <h2>Пример игрового экрана (компьютер)</h2>
+    <p class="muted">На одном экране — своё поле и поле противника. Видно, куда и что строит враг.</p>
+
+    <div class="mock">
+      <div class="mock-top">
+        <span class="stat">💰 100 <span class="muted">(+1/с)</span></span>
+        <span class="stat">⏱ 10:00</span>
+        <span class="stat">❤️ 20</span>
+        <span class="spacer"></span>
+        <span class="btn">Поставить башню · 20💰</span>
+      </div>
+
+      <div class="mock-fields">
+        <div class="field">
+          <span class="label">Твоё поле</span>
+          <div class="path"></div>
+          <span class="castle own">🏰</span>
+          <span class="tower" style="top:52%;left:8%;">🔫 Автомат</span>
+          <span class="tower" style="top:30%;left:38%;">🏹 Балиста</span>
+          <span class="tower" style="top:70%;left:46%;">🧊 Замедлялка</span>
+          <span class="tower" style="top:58%;left:20%;">⚡ Улучшалка</span>
+          <span class="mush" style="top:46%;left:22%;">🍄</span>
+          <span class="mush" style="top:38%;left:28%;">🍄</span>
+          <span class="hint">враги идут по тропинке</span>
+        </div>
+
+        <div class="field">
+          <span class="label">Поле противника</span>
+          <div class="path"></div>
+          <span class="castle enemy">🏰</span>
+          <span class="tower" style="top:55%;left:55%;">🔫 Автомат</span>
+          <span class="tower" style="top:34%;left:28%;">🏹 Балиста</span>
+          <span class="mush" style="top:60%;left:40%;">🍄</span>
+          <span class="mush" style="top:50%;left:34%;">🍄</span>
+          <span class="hint">твои грибы атакуют</span>
+        </div>
+      </div>
+
+      <p class="capsule-title">Поле создания юнитов</p>
+      <div class="mock-bottom">
+        <div class="queue" title="Бесконечная очередь начальных грибов">🍄🍄🍄</div>
+        <span class="arrow">→</span>
+        <div class="lab">
+          <div class="cap">Колба брони</div>
+          <div class="val">🍄 +1 броня/с</div>
+        </div>
+        <div class="lab">
+          <div class="cap">Колба скорости</div>
+          <div class="val">🍄 +1 скорость/с</div>
+        </div>
+        <span class="arrow">→</span>
+        <div class="lab" style="border-color: var(--green);">
+          <div class="cap">Выход</div>
+          <div class="val">на поле противника</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s-mvp">
+    <h2><span class="tag">MVP</span> Ядро</h2>
+
+    <h3>Экономика обороны</h3>
+    <ul>
+      <li>Деньги генерируются каждую секунду: <strong>+1 монета/сек</strong>.</li>
+      <li>Стартовый баланс: <strong>100 монет</strong>.</li>
+    </ul>
+
+    <h3>Орудия защиты — 4 вида</h3>
+    <ul>
+      <li><strong>Автомат</strong> — небольшой урон по наземным и воздушным, 1 юнит за выстрел.</li>
+      <li><strong>Балиста</strong> — большой урон по площади, только наземные, стреляет медленно.</li>
+      <li><strong>Замедлялка</strong> — только наземные.</li>
+      <li><strong>Улучшалка</strong> — увеличивает характеристики орудий на соседних клетках.</li>
+    </ul>
+
+    <h3>Поле создания юнитов (под полем или рядом)</h3>
+    <p>2 колбы, в которых гриб прокачивается:</p>
+    <ul>
+      <li><strong>Броня</strong> — +1 каждую секунду (изначально 1), увеличивается размер шляпки.</li>
+      <li><strong>Скорость</strong> — +1 каждую секунду (изначально 0), отрастают ноги и высота гриба.</li>
+    </ul>
+    <ul>
+      <li>Оба параметра можно увеличивать сколько угодно.</li>
+      <li>Одновременно в колбе — только 1 гриб.</li>
+      <li>Перенос грибов: бесконечная очередь (начальные грибы) → колбы → из колбы в колбу → на выход (небольшой путь и появление на поле противника).</li>
+    </ul>
+  </section>
+
+  <section class="s-green">
+    <h2><span class="tag">Больше MVP</span> Развитие</h2>
+
+    <h3>Усилители для грибов</h3>
+    <ul>
+      <li>Например: крылья, автомат (разрушать строения противника), крот (часть пути пройти под землёй) и т.д.</li>
+      <li>Получать за достижения (даже самые мелкие) и покупать за игровую валюту.</li>
+      <li>Способы получения: лут-боксы или напрямую.</li>
+    </ul>
+
+    <h3>Расходники для защиты</h3>
+    <p class="muted">Одноразовые предметы, усиливающие оборону.</p>
+
+    <h3>Разные карты и уровни</h3>
+    <ul>
+      <li>Играть только с теми, у кого такая же беспроигрышная сессия побед.</li>
+      <li>Получение короны: если достиг серии побед и в течение 5 минут ты — единственный, кто этого достиг.</li>
+    </ul>
+  </section>
+
+  <section class="s-purple">
+    <h2><span class="tag">Можно менять</span> Сеттинг</h2>
+    <ul>
+      <li>Поле — лес и тропинка в лесу.</li>
+      <li>Юниты — грибы на ножках.</li>
+    </ul>
+  </section>
+
+</div>
+</body>
+</html>
